@@ -406,7 +406,7 @@
       <span>家電製品・文具・娯楽用品・車両・乗り物・建物・設備（2016年以降）</span>
     </div>
     <h1>リコール一覧</h1>
-    <p class="lede">消費者庁のデータベースに収録された、2016年以降のリコール案件 988件です。車両・乗り物は、中古販売に関連する用品120件を選別収録しています（このカテゴリの全件ではありません）。画像をタップすると消費者庁の詳細ページが開きます。</p>
+    <p class="lede">消費者庁のデータベースに収録された、2016年以降のリコール案件 988件です。車両・乗り物は、中古販売に関連する用品120件を選別収録しています（このカテゴリの全件ではありません）。画像をタップすると消費者庁の詳細ページが新しいウインドウで開きます。</p>
   </header>
 
   <div class="search-sticky">
@@ -643,7 +643,7 @@ var DATA = [{"date": "2026-11-09", "rcl": "00000036096", "kubun": "家電製品"
   function buildRow(d){
     var tr = document.createElement('tr');
     var imgUrl = 'https://www.recall.caa.go.jp/images/rci/img/product/' + d.rcl + '_1.jpg';
-    var thumbHTML = '<a class="thumb-wrap" href="' + esc(d.url) + '" target="_blank" rel="noopener" aria-label="消費者庁の詳細で画像を見る：' + esc(d.product) + '">' +
+    var thumbHTML = '<a class="thumb-wrap" href="' + esc(d.url) + '" target="_blank" rel="noopener noreferrer" aria-label="消費者庁の詳細を新しいウインドウで開く：' + esc(d.product) + '">' +
       '<img src="' + imgUrl + '" alt="' + esc(d.product) + 'の製品画像" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.parentNode.classList.add(\'no-img\');this.remove();">' +
       '</a>';
     var badgeHTML = d._act
@@ -818,6 +818,19 @@ var DATA = [{"date": "2026-11-09", "rcl": "00000036096", "kubun": "家電製品"
   kubunFilter.addEventListener('change', function(){ state.kubun = kubunFilter.value; render(); });
   tbody.addEventListener('click', function(e){
     var t = e.target;
+    /* 画像クリックは消費者庁の詳細を必ず新しいウインドウ（タブ）で開く。
+       target="_blank" を効かせない表示環境でも一覧に戻れるよう、明示的に開く */
+    var node = t;
+    while (node && node !== tbody){
+      if (node.classList && node.classList.contains('thumb-wrap')){
+        if (!e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey && e.button === 0){
+          var opened = window.open(node.href, '_blank', 'noopener,noreferrer');
+          if (opened) e.preventDefault();
+        }
+        return;
+      }
+      node = node.parentNode;
+    }
     if (t && t.classList && t.classList.contains('model-toggle')){
       var list = t.parentNode;
       var expanded = list.classList.toggle('expanded');
