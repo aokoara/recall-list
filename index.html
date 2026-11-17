@@ -189,6 +189,8 @@
   .thumb-wrap.no-img{display:none}
   td.maker{font-weight:700;min-width:110px}
   .product{font-weight:500;line-height:1.55}
+  .product a{color:inherit;text-decoration:none}
+  .product a:hover{text-decoration:underline}
   .orig{color:var(--ink-3);font-size:11.5px;line-height:1.5;margin-top:3px}
   td.action{white-space:nowrap}
   td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -653,7 +655,7 @@ var DATA = [{"date": "2026-11-17", "rcl": "00000036137", "kubun": "家電製品"
       '<td class="date"><div class="card-head"><span class="date-label">掲載日</span><span>' + esc(d.date) + '</span></div></td>' +
       '<td class="thumb-cell">' + thumbHTML + '</td>' +
       '<td class="maker">' + esc(d.maker) + '</td>' +
-      '<td class="product-cell"><div class="product">' + esc(d.product) + '</div>' +
+      '<td class="product-cell"><div class="product"><a class="product-link" href="' + esc(d.url) + '" target="_blank" rel="noopener noreferrer">' + esc(d.product) + '</a></div>' +
         '<span class="kubun-tag">' + esc(d.kubun) + '</span>' +
         '<span class="cat-tag">' + esc(d._cat) + '</span>' +
         (d._hitTerms && d._hitTerms.length ? '<div class="hit-terms">検索語 ' + d._hitTerms.map(function(t){ return '<b>「' + esc(t) + '」</b>'; }).join('') + ' で一致</div>' : '') + '</td>' +
