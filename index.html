@@ -438,9 +438,9 @@
         <select id="actionFilter" class="filter-select" aria-label="対応で絞り込み">
           <option value="">対応：すべて</option>
           <option value="a-recall">回収を含む</option>
-          <option value="a-refund">返金</option>
-          <option value="a-exchange">交換</option>
-          <option value="a-check">点検・修理</option>
+          <option value="a-refund">返金を含む</option>
+          <option value="a-exchange">交換を含む</option>
+          <option value="a-check">点検・修理を含む</option>
           <option value="a-other">注意喚起など</option>
         </select>
       </div>
@@ -616,6 +616,21 @@ var DATA = [{"date": "2026-11-20", "rcl": "00000036172", "kubun": "家電製品"
     return 'a-other';
   }
 
+  /* フィルター用：複合表記（交換／回収など）は、含む側すべてに一致させる */
+  function actionMatch(a, cls){
+    a = a || '';
+    var recall = a.indexOf('回収') !== -1;
+    var refund = a.indexOf('返金') !== -1;
+    var exchange = a.indexOf('交換') !== -1;
+    var check = a.indexOf('点検') !== -1 || a.indexOf('修理') !== -1;
+    if (cls === 'a-recall') return recall;
+    if (cls === 'a-refund') return refund;
+    if (cls === 'a-exchange') return exchange;
+    if (cls === 'a-check') return check;
+    if (cls === 'a-other') return !(recall || refund || exchange || check);
+    return true;
+  }
+
   DATA.forEach(function(d){
     d._cat = categoryOf(d);
     d._act = effAction(d);
@@ -712,7 +727,7 @@ var DATA = [{"date": "2026-11-20", "rcl": "00000036172", "kubun": "家電製品"
     return false;
   }
   function matches(d){
-    if (state.action && actionClass(d._act) !== state.action) return false;
+    if (state.action && !actionMatch(d._act, state.action)) return false;
     if (state.cat && d._cat !== state.cat) return false;
     if (state.kubun && d.kubun !== state.kubun) return false;
     if (!state.terms.length) return true;
@@ -725,7 +740,7 @@ var DATA = [{"date": "2026-11-20", "rcl": "00000036172", "kubun": "家電製品"
   }
 
   function baseMatches(d){
-    if (state.action && actionClass(d._act) !== state.action) return false;
+    if (state.action && !actionMatch(d._act, state.action)) return false;
     if (state.cat && d._cat !== state.cat) return false;
     if (state.kubun && d.kubun !== state.kubun) return false;
     return true;
